@@ -40,4 +40,30 @@ class Server:
         return self.__indexed_dataset
 
     def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
-
+        """
+        Hypermedia index for a dataset
+        Args:
+            index (int, optional): Index of dataset to start from.
+            Defaults to None.
+            page_size (int, optional): Size of dataset to return.
+            Defaults to 10.
+        Returns:
+            info(Dict): Hypermedia index
+        """
+        assert type(index) is int
+        assert type(page_size) is int
+        assert 0 <= index < len(self.dataset())
+        next_index = index + page_size
+        try:
+            data = [self.indexed_dataset()[k]
+                    for k in range(index, next_index)]
+        except KeyError:
+            data = [self.indexed_dataset()[k]
+                    for k in range(index + 1, next_index + 1)]
+        info = {
+            "index": index,
+            "next_index": next_index,
+            "page_size": 10 if index == 0 else page_size,
+            "data": data
+        }
+        return info
